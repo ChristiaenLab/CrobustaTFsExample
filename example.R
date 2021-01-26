@@ -1,13 +1,17 @@
+library(ComplexHeatmap)
+library(rtracklayer)
 library(BSgenome.Crobusta.HT.KY)
 library(CrobustaTFs)
 library(tfenrichr)
 library(peakToGene)
-library(moreComplexHeatmap)
+library(dirfns)
 
 # motifs are expressed as position weight matrices
 # 
 CrobustaMotifs
 Matrix(CrobustaMotifs)
+
+seqLogo::seqLogo(Matrix(CrobustaMotifs[[1]]))
 
 # Redundancy
 # CrobustaTFs::CrobustaMotifs includes only the most specific motifs for each gene (motifs mapped to the fewest genes)
@@ -44,10 +48,10 @@ motifsub <- split(motifsub, tfTags(motifsub,"KYID"))
 motifsub <- do.call(PWMatrixList, sapply(motifsub, function(x) x[[which.max(tfWidth(x))]]))
 
 # read genomic features
-htky <- getFeatures('data-raw/HT.Gene.gff3')
+htky <- getFeatures('HT.Gene.gff3')
 
 #read peakome
-peaks <- rtracklayer::import('data-raw/accessomeKY.bed')
+peaks <- import('accessomeKY.bed')
 overlaps <- lapply(htky, getOverlaps, peaks)
 
 # match score is a function of background NT frequency
